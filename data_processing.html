@@ -18,6 +18,9 @@
       #container {
         height: 100%;
       }
+      .arry{
+        font-size: 30px;
+      }
     </style>
     <script
       type="text/javascript"
@@ -28,7 +31,10 @@
   </head>
 
   <body>
-    <div id="container"></div>
+    <p class="arry">等待数组输出</p>
+    <div id="container">
+      
+    </div>
     <script type="text/javascript">
       var myGeo = new BMap.Geocoder();
       var myChart = echarts.init(document.getElementById("container"));
@@ -2441,38 +2447,37 @@
         }
       ];
 
-      function convertData(data) {
+      async function convertData(data) {
         var res = new Array();
-        for (var i = 0; i < data.length; i++) {
-          (function(i) {
+        for(const item of data){
+          abc(res,item)
+        }       
+        return res;
+      }
+      function abc(res,item){
             var zb;
             myGeo.getPoint(
-              data[i].address,
+              item.address,
               function(point) {
                 if (point) {
                   zb = [point.lng, point.lat];
-                  zb = zb.concat(Number(data[i].value));
-                  // res[i].name=data[i].name
-                  // res[i].value=zb
+                  zb = zb.concat(Number(item.value));
                   var t = {
-                    name: data[i].name,
+                    name: item.name,
                     value: zb
                   };
-                  console.log('{name:"' + t.name + '",');
-                  console.log("value:[" + t.value + "]},");
                   res.push(t);
                 }
               },
               "杭州市"
             );
-          })(i);
-        }
-        return res;
-      }
-      async function test(data) {
-        var a = await convertData(data);
-      }
-      test(data);
+          }
+      let promise =new Promise((resolve,reject)=>{
+        resolve(convertData(data))
+      })
+      promise.then((result)=>{
+        setTimeout(function(){ document.querySelector("p").innerHTML = JSON.stringify(result) }, 12400)
+      })
     </script>
   </body>
 </html>
